@@ -23,7 +23,7 @@ class Explorador {
 
         switch (escolha) {
             case 1:
-                posicaoColuna = Math.min(posicaoColuna + 1, mapa.linhas - 1);
+                posicaoColuna = Math.min(posicaoColuna + 1, mapa.getColunas() - 1);
                 break;
             case 2:
                 posicaoColuna = Math.max(posicaoColuna - 1, 0);
@@ -32,7 +32,7 @@ class Explorador {
                 posicaoLinha = Math.max(posicaoLinha - 1, 0);
                 break;
             case 4:
-                posicaoLinha = Math.min(posicaoLinha + 1, mapa.colunas - 1);
+                posicaoLinha = Math.min(posicaoLinha + 1, mapa.getLinhas() - 1);
                 break;
             default:
                 System.out.println("Ação inválida. Movimento para a frente.");
@@ -92,51 +92,5 @@ class Explorador {
 
     public boolean verificarObjetivo() {
         return recursosColetados == 15;
-    }
-}
-
-public class JogoExpedicao {
-    private Mapa mapa;
-    private Explorador explorador;
-    private int rodadas;
-    private boolean jogoEncerrado;
-
-    public JogoExpedicao(int linhas, int colunas) {
-        this.mapa = new Mapa(linhas, colunas);
-        this.explorador = new Explorador(mapa);
-        this.rodadas = 0;
-        this.jogoEncerrado = false;
-    }
-
-    public void inicializar() {
-        mapa.inicializarMapa();
-        explorador.inicializarPosicao();
-    }
-
-    public void iniciarJogo(Scanner scanner) {
-        while (!jogoEncerrado) {
-            System.out.println("\n----- Rodada " + rodadas + " -----");
-            explorador.mostrarStatus();
-            realizarRodada(scanner);
-            rodadas++;
-
-            if (explorador.verificarObjetivo()) {
-                System.out.println("\nParabéns! Você coletou todos os recursos. Você venceu!");
-                break;
-            }
-
-            if (rodadas > 30) {
-                System.out.println("\nInfelizmente, você ultrapassou 30 rodadas. Você perdeu!");
-                break;
-            }
-        }
-    }
-
-    private void realizarRodada(Scanner scanner) {
-        explorador.mover(scanner);
-        explorador.coletarRecursos();
-        explorador.lidarComEventos();
-        explorador.interagirComHabitanteLocal();
-        mapa.mostrarMapa();
     }
 }

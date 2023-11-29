@@ -1,108 +1,52 @@
 class Mapa {
-    private TipoTerreno[][] matriz;
-    private int linhas;
-    private int colunas;
-    private int posXJogador;
-    private int posYJogador;
-    private Scanner scanner;
-    private int recursosColetados;
-
-    public Mapa(int linhas, int colunas) {
-        this.linhas = linhas;
-        this.colunas = colunas;
-        this.matriz = new TipoTerreno[linhas][colunas];
-        this.scanner = new Scanner(System.in);
-        this.recursosColetados = 0;
-    }
-
-    public void inicializarMapa() {
-        preencherBordas();
-        adicionarRecursosAleatorios();
-        criarJogador();
-    }
+    // ... (restante do código)
 
     private void preencherBordas() {
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
                 if (i == 0 || i == linhas - 1 || j == 0 || j == colunas - 1) {
-                    matriz[i][j] = TipoTerreno.FLORESTA;
+                    matriz[i][j] = TipoTerreno.ASTERISCO;
                 } else {
-                    matriz[i][j] = TipoTerreno.VAZIO;  // Alteração para representar o interior como VAZIO
+                    matriz[i][j] = TipoTerreno.VAZIO;
                 }
             }
         }
     }
 
-    private void adicionarRecursosAleatorios() {
-        Random random = new Random();
-        int quantidadeRecursos = linhas * colunas / 8; // Ajuste conforme necessário
-
-        for (int i = 0; i < quantidadeRecursos; i++) {
-            int linha;
-            int coluna;
-
-            do {
-                linha = random.nextInt(linhas - 2) + 1; // Evitar bordas
-                coluna = random.nextInt(colunas - 2) + 1; // Evitar bordas
-            } while (matriz[linha][coluna] != TipoTerreno.VAZIO); // Garantir que a posição esteja vazia
-
-            matriz[linha][coluna] = TipoTerreno.FLORESTA; // Alterado para FLORESTA (pode ajustar conforme necessário)
-        }
-    }
-
-    private void criarJogador() {
-        posXJogador = 3;
-        posYJogador = 5;
-
-        matriz[posXJogador][posYJogador] = TipoTerreno.JOGADOR;
-    }
+    // ... (restante do código)
 
     public void moverJogador() {
         System.out.println("Mova o jogador: W A S D");
         String movimento = scanner.nextLine();
 
-        matriz[posXJogador][posYJogador] = TipoTerreno.VAZIO;
+        int novaPosXJogador = posXJogador;
+        int novaPosYJogador = posYJogador;
 
         switch (movimento.toLowerCase()) {
             case "a":
-                posYJogador = Math.max(posYJogador - 1, 1); // Evitar borda
+                novaPosYJogador = Math.max(posYJogador - 1, 1); // Evitar borda
                 break;
             case "d":
-                posYJogador = Math.min(posYJogador + 1, colunas - 2); // Evitar borda
+                novaPosYJogador = Math.min(posYJogador + 1, colunas - 2); // Evitar borda
                 break;
             case "w":
-                posXJogador = Math.max(posXJogador - 1, 1); // Evitar borda
+                novaPosXJogador = Math.max(posXJogador - 1, 1); // Evitar borda
                 break;
             case "s":
-                posXJogador = Math.min(posXJogador + 1, linhas - 2); // Evitar borda
+                novaPosXJogador = Math.min(posXJogador + 1, linhas - 2); // Evitar borda
                 break;
         }
 
-        if (matriz[posXJogador][posYJogador] == TipoTerreno.FLORESTA) {
+        if (matriz[novaPosXJogador][novaPosYJogador] == TipoTerreno.FLORESTA) {
             recursosColetados++;
             System.out.println("Recurso coletado! Total de recursos: " + recursosColetados);
         }
 
+        matriz[posXJogador][posYJogador] = TipoTerreno.VAZIO;
+        posXJogador = novaPosXJogador;
+        posYJogador = novaPosYJogador;
         matriz[posXJogador][posYJogador] = TipoTerreno.JOGADOR;
     }
 
-    public void imprimirMapa() {
-        System.out.println("\nMapa:");
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                if (matriz[i][j] != null && matriz[i][j] != TipoTerreno.JOGADOR) {
-                    System.out.print(matriz[i][j].toString().charAt(0) + " ");
-                } else if (matriz[i][j] == TipoTerreno.JOGADOR) {
-                    System.out.print("& ");
-                } else {
-                    System.out.print("  ");  // Alteração para representar o interior como espaço em branco
-                }
-            }
-            System.out.println();
-        }
-    }
-
-    public int getRecursosColetados() {
-        return recursosColetados;
-    }
+    // ... (restante do código)
 }

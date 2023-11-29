@@ -1,85 +1,24 @@
-import java.util.Random;
-import java.util.Scanner;
+public class MatrizEstrelas {
+    public static void main(String[] args) {
+        int linhas = 10;
+        int colunas = 10;
 
-class Mapa {
-    private TipoTerreno[][] matriz;
-    private int linhas;
-    private int colunas;
+        String[][] matriz = new String[linhas][colunas];
 
-    public Mapa(int linhas, int colunas) {
-        this.linhas = linhas;
-        this.colunas = colunas;
-        this.matriz = new TipoTerreno[linhas][colunas];
-    }
-
-    public void inicializarMapa() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Deseja o tamanho padrão do mapa (10x10) ou especificar? (1 - Padrão, 2 - Especificar)");
-        int escolhaTamanho = scanner.nextInt();
-
-        if (escolhaTamanho == 1) {
-            this.linhas = 10;
-            this.colunas = 10;
-        } else {
-            System.out.print("Digite o número de linhas do mapa (entre 7 e 20): ");
-            this.linhas = Math.min(Math.max(scanner.nextInt(), 7), 20);
-
-            System.out.print("Digite o número de colunas do mapa (entre 7 e 20): ");
-            this.colunas = Math.min(Math.max(scanner.nextInt(), 7), 20);
-        }
-
-        Random random = new Random();
-
+        // Preencher a matriz com "*"
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
-                matriz[i][j] = TipoTerreno.values()[random.nextInt(TipoTerreno.values().length)];
+                matriz[i][j] = "*";
             }
         }
 
-        // Delimitar espaços entre regiões
+        // Exibir a matriz
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
-                int chanceRegiao = random.nextInt(100);
-                if (chanceRegiao < 25) {
-                    matriz[i][j] = TipoTerreno.FLORESTA;
-                } else if (chanceRegiao < 50) {
-                    matriz[i][j] = TipoTerreno.SAVANA;
-                } else if (chanceRegiao < 75) {
-                    matriz[i][j] = TipoTerreno.PANTANO;
-                } else {
-                    matriz[i][j] = TipoTerreno.DESERTO;
-                }
-            }
-        }
-
-        // Adicionar aleatoriamente uma quantidade de diferentes tipos de recursos
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                adicionarRecursosAleatorios(i, j, random);
-            }
-        }
-    }
-
-    private void adicionarRecursosAleatorios(int linha, int coluna, Random random) {
-        int chanceRecurso = random.nextInt(100);
-        if (chanceRecurso < 30) {
-            matriz[linha][coluna] = TipoTerreno.values()[random.nextInt(TipoRecurso.values().length)];
-        }
-    }
-
-    public void mostrarMapa() {
-        System.out.println("\nMapa:");
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                System.out.print(matriz[i][j].toString().charAt(0) + " ");
+                System.out.print(matriz[i][j] + " ");
             }
             System.out.println();
         }
     }
-
-    public TipoTerreno obterTipoTerreno(int linha, int coluna) {
-        return matriz[linha][coluna];
-    }
 }
 
-// Restante do código permanece inalterado

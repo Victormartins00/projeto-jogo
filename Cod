@@ -1,5 +1,33 @@
-class Mapa {
-    // ... (restante do código)
+import java.util.Random;
+import java.util.Scanner;
+
+enum TipoTerreno {
+    FLORESTA, SAVANA, PANTANO, DESERTO, JOGADOR, VAZIO, ASTERISCO
+}
+
+public class Mapa {
+    private TipoTerreno[][] matriz;
+    private int linhas;
+    private int colunas;
+    private int posXJogador;
+    private int posYJogador;
+    private int recursosColetados;
+    private Scanner scanner;
+
+    public Mapa(int linhas, int colunas) {
+        this.linhas = linhas;
+        this.colunas = colunas;
+        this.matriz = new TipoTerreno[linhas][colunas];
+        this.scanner = new Scanner(System.in);
+        this.recursosColetados = 0;
+    }
+
+    public void inicializarMapa() {
+        preencherBordas();
+        preencherMapaAleatorio();
+        inicializarPosicaoJogador();
+        imprimirMapa();
+    }
 
     private void preencherBordas() {
         for (int i = 0; i < linhas; i++) {
@@ -13,7 +41,31 @@ class Mapa {
         }
     }
 
-    // ... (restante do código)
+    private void preencherMapaAleatorio() {
+        Random random = new Random();
+
+        for (int i = 1; i < linhas - 1; i++) {
+            for (int j = 1; j < colunas - 1; j++) {
+                matriz[i][j] = TipoTerreno.values()[random.nextInt(TipoTerreno.values().length - 3)];
+            }
+        }
+    }
+
+    private void inicializarPosicaoJogador() {
+        posXJogador = linhas / 2;
+        posYJogador = colunas / 2;
+        matriz[posXJogador][posYJogador] = TipoTerreno.JOGADOR;
+    }
+
+    public void imprimirMapa() {
+        System.out.println("\nMapa:");
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                System.out.print(matriz[i][j].toString().charAt(0) + " ");
+            }
+            System.out.println();
+        }
+    }
 
     public void moverJogador() {
         System.out.println("Mova o jogador: W A S D");
@@ -47,9 +99,6 @@ class Mapa {
         posYJogador = novaPosYJogador;
         matriz[posXJogador][posYJogador] = TipoTerreno.JOGADOR;
 
-        imprimirMapa(); // Adicionado para exibir o mapa após cada movimento
+        imprimirMapa();
     }
-
-    // ... (restante do código)
 }
-

@@ -46,7 +46,10 @@ class Mapa {
         posXJogador = novaPosXJogador;
         posYJogador = novaPosYJogador;
         matriz[posXJogador][posYJogador] = TipoTerreno.JOGADOR;
+
+        imprimirMapa(); // Adicionado para exibir o mapa após cada movimento
     }
 
     // ... (restante do código)
 }
+

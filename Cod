@@ -1,14 +1,18 @@
-public class MatrizEstrelas {
+public class MatrizBordas {
     public static void main(String[] args) {
         int linhas = 10;
         int colunas = 10;
 
         String[][] matriz = new String[linhas][colunas];
 
-        // Preencher a matriz com "*"
+        // Preencher as bordas da matriz com "*"
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
-                matriz[i][j] = "*";
+                if (i == 0 || i == linhas - 1 || j == 0 || j == colunas - 1) {
+                    matriz[i][j] = "*";
+                } else {
+                    matriz[i][j] = " "; // Preencher o interior com espaços em branco
+                }
             }
         }
 
@@ -21,4 +25,5 @@ public class MatrizEstrelas {
         }
     }
 }
+
 

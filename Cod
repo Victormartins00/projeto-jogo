@@ -63,3 +63,82 @@ class JogoExpedicao {
         // Restante do código
     }
 }
+
+import java.util.Scanner;
+
+public class Mapa {
+    int linha;
+    int coluna;
+    int posXJogador;
+    int posYJogador;
+    String movimento;
+    String mapaPadrao[][] = new String[10][10];
+    Scanner sc = new Scanner(System.in);
+
+    public Mapa(int linha, int coluna) {
+        this.linha = linha;
+        this.coluna = coluna;
+    }
+
+
+    public void criarMapaPadrao(){
+        linha = 10;
+        coluna = 10;
+        for (int i = 0; i < linha; i++) {
+            for (int j = 0; j < coluna; j++) {
+                if (i == 0 || i == linha - 1 || j == 0 || j == coluna - 1) {
+                    mapaPadrao[i][j] = "*";
+                } else {
+                    mapaPadrao[i][j] = " "; 
+                }
+            }
+        }
+    }
+
+    public void criarJogador(){
+        posXJogador = 3;
+        posYJogador = 5;
+
+        mapaPadrao[posXJogador][posYJogador] = "&";
+    }
+
+    public void moverJogador(){
+        System.out.println("Mova o jogador: W A S D");
+        movimento = sc.nextLine();
+
+        switch(movimento){
+            case "a":
+            mapaPadrao[posXJogador][posYJogador] = " ";
+            posYJogador--;
+            mapaPadrao[posXJogador][posYJogador] = "&";
+            break;
+            case "d":
+            mapaPadrao[posXJogador][posYJogador] = " ";
+            posYJogador++;
+            mapaPadrao[posXJogador][posYJogador] = "&";
+            break;
+            case "w":
+            mapaPadrao[posXJogador][posYJogador] = " ";
+            posXJogador--;
+            mapaPadrao[posXJogador][posYJogador] = "&";
+            break;
+            case "s":
+            mapaPadrao[posXJogador][posYJogador] = " ";
+            posXJogador++;
+            mapaPadrao[posXJogador][posYJogador] = "&";
+            break;
+        }
+        
+    }
+
+    public void imprimirMapa(){
+        for (int i = 0; i < linha; i++) {
+            for (int j = 0; j < coluna; j++) {
+                System.out.print(mapaPadrao[i][j] + " ");
+            }
+            System.out.println();
+        }
+        
+    }
+    
+}

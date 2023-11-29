@@ -1,5 +1,68 @@
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+
+enum TipoTerreno {
+    FLORESTA, SAVANA, PANTANO, DESERTO
+}
+
+enum TipoRecurso {
+    COMIDA, AGUA, MATERIAL
+}
+
+class Mapa {
+    private int linhas;
+    private int colunas;
+    private TipoTerreno[][] matriz;
+    private Random random;
+
+    public Mapa(int linhas, int colunas) {
+        this.linhas = linhas;
+        this.colunas = colunas;
+        this.matriz = new TipoTerreno[linhas][colunas];
+        this.random = new Random();
+    }
+
+    public int obterLinhas() {
+        return linhas;
+    }
+
+    public int obterColunas() {
+        return colunas;
+    }
+
+    public void inicializarMapa() {
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                if (i == 0 || i == linhas - 1 || j == 0 || j == colunas - 1) {
+                    matriz[i][j] = TipoTerreno.FLORESTA;  // Altere para '*' se preferir
+                } else {
+                    matriz[i][j] = TipoTerreno.FLORESTA;  // Altere para ' ' se preferir
+                }
+            }
+        }
+    }
+
+    public void delimitarRegioes() {
+        // Implemente conforme as suas regras
+    }
+
+    public void adicionarRecursos() {
+        // Implemente conforme as suas regras
+    }
+
+    public void mostrarMapa() {
+        System.out.println("\nMapa:");
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                System.out.print(matriz[i][j].toString().charAt(0) + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public TipoTerreno obterTipoTerreno(int linha, int coluna) {
+        return matriz[linha][coluna];
+    }
+}
 
 class Explorador {
     private int posicaoLinha;
@@ -13,17 +76,18 @@ class Explorador {
     }
 
     public void inicializarPosicao() {
-        this.posicaoLinha = 0;
-        this.posicaoColuna = 0;
+        // Implemente conforme as suas regras
     }
 
-    public void mover(Scanner scanner) {
+    public void movimentar() {
+        Scanner scanner = new Scanner(System.in);
+
         System.out.print("Escolha sua ação (1: Direita, 2: Esquerda, 3: Cima, 4: Baixo): ");
         int escolha = scanner.nextInt();
 
         switch (escolha) {
             case 1:
-                posicaoColuna = Math.min(posicaoColuna + 1, mapa.getColunas() - 1);
+                posicaoColuna = Math.min(posicaoColuna + 1, mapa.obterColunas() - 1);
                 break;
             case 2:
                 posicaoColuna = Math.max(posicaoColuna - 1, 0);
@@ -32,7 +96,7 @@ class Explorador {
                 posicaoLinha = Math.max(posicaoLinha - 1, 0);
                 break;
             case 4:
-                posicaoLinha = Math.min(posicaoLinha + 1, mapa.getLinhas() - 1);
+                posicaoLinha = Math.min(posicaoLinha + 1, mapa.obterLinhas() - 1);
                 break;
             default:
                 System.out.println("Ação inválida. Movimento para a frente.");
@@ -40,49 +104,16 @@ class Explorador {
     }
 
     public void coletarRecursos() {
-        TipoTerreno tipoTerreno = mapa.obterTipoTerreno(posicaoLinha, posicaoColuna);
-
-        switch (tipoTerreno) {
-            case FLORESTA:
-                coletarRecurso(TipoRecurso.MATERIAL);
-                break;
-            case SAVANA:
-                coletarRecurso(TipoRecurso.AGUA);
-                break;
-            case PANTANO:
-                coletarRecurso(TipoRecurso.COMIDA);
-                break;
-            case DESERTO:
-                coletarRecurso(TipoRecurso.MATERIAL);
-                break;
-        }
-    }
-
-    private void coletarRecurso(TipoRecurso tipoRecurso) {
-        recursosColetados++;
-        System.out.println("Recurso coletado: " + tipoRecurso);
-        mostrarStatus();
+        // Implemente a coleta de recursos e gerenciamento do inventário aqui
+        // Certifique-se de atualizar o contador de recursos
     }
 
     public void lidarComEventos() {
-        Random random = new Random();
-        int chanceEvento = random.nextInt(100);
-
-        if (chanceEvento < 20) {
-            System.out.println("Evento Aleatório: Uma tempestade se aproxima. Você perde alguns recursos!");
-            recursosColetados = Math.max(0, recursosColetados - 2);
-            mostrarStatus();
-        }
+        // Implemente o tratamento de eventos aleatórios aqui
     }
 
     public void interagirComHabitanteLocal() {
-        Random random = new Random();
-        int chanceInteracao = random.nextInt(100);
-
-        if (chanceInteracao < 10) {
-            HabitanteLocal habitanteLocal = new HabitanteLocal();
-            habitanteLocal.interagir();
-        }
+        // Implemente a interação com habitantes locais aqui
     }
 
     public void mostrarStatus() {
@@ -91,6 +122,41 @@ class Explorador {
     }
 
     public boolean verificarObjetivo() {
-        return recursosColetados == 15;
+        // Implemente a verificação do objetivo do jogador aqui
+        return false;
+    }
+}
+
+public class JogoExpedicao {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Mapa mapa = new Mapa(10, 10);
+        Explorador explorador = new Explorador(mapa);
+
+        mapa.inicializarMapa();
+        explorador.inicializarPosicao();
+
+        int rodadas = 0;
+
+        while (rodadas < 30) {
+            System.out.println("\n----- Rodada " + rodadas + " -----");
+            explorador.movimentar();
+            explorador.coletarRecursos();
+            explorador.lidarComEventos();
+            explorador.interagirComHabitanteLocal();
+            mapa.mostrarMapa();
+            explorador.mostrarStatus();
+
+            if (explorador.verificarObjetivo()) {
+                System.out.println("\nParabéns! Você coletou todos os recursos. Você venceu!");
+                break;
+            }
+
+            rodadas++;
+        }
+
+        if (rodadas >= 30) {
+            System.out.println("\nInfelizmente, você ultrapassou 30 rodadas. Você perdeu!");
+        }
     }
 }

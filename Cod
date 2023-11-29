@@ -1,104 +1,142 @@
 import java.util.Random;
 import java.util.Scanner;
 
-enum TipoTerreno {
-    FLORESTA, SAVANA, PANTANO, DESERTO, JOGADOR, VAZIO, ASTERISCO
-}
-
-public class Mapa {
-    private TipoTerreno[][] matriz;
-    private int linhas;
-    private int colunas;
-    private int posXJogador;
-    private int posYJogador;
+class Explorador {
+    private int posicaoLinha;
+    private int posicaoColuna;
     private int recursosColetados;
-    private Scanner scanner;
+    private Mapa mapa;
 
-    public Mapa(int linhas, int colunas) {
-        this.linhas = linhas;
-        this.colunas = colunas;
-        this.matriz = new TipoTerreno[linhas][colunas];
-        this.scanner = new Scanner(System.in);
+    public Explorador(Mapa mapa) {
+        this.mapa = mapa;
         this.recursosColetados = 0;
     }
 
-    public void inicializarMapa() {
-        preencherBordas();
-        preencherMapaAleatorio();
-        inicializarPosicaoJogador();
-        imprimirMapa();
+    public void inicializarPosicao() {
+        this.posicaoLinha = 0;
+        this.posicaoColuna = 0;
     }
 
-    private void preencherBordas() {
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                if (i == 0 || i == linhas - 1 || j == 0 || j == colunas - 1) {
-                    matriz[i][j] = TipoTerreno.ASTERISCO;
-                } else {
-                    matriz[i][j] = TipoTerreno.VAZIO;
-                }
-            }
+    public void mover(Scanner scanner) {
+        System.out.print("Escolha sua ação (1: Direita, 2: Esquerda, 3: Cima, 4: Baixo): ");
+        int escolha = scanner.nextInt();
+
+        switch (escolha) {
+            case 1:
+                posicaoColuna = Math.min(posicaoColuna + 1, mapa.linhas - 1);
+                break;
+            case 2:
+                posicaoColuna = Math.max(posicaoColuna - 1, 0);
+                break;
+            case 3:
+                posicaoLinha = Math.max(posicaoLinha - 1, 0);
+                break;
+            case 4:
+                posicaoLinha = Math.min(posicaoLinha + 1, mapa.colunas - 1);
+                break;
+            default:
+                System.out.println("Ação inválida. Movimento para a frente.");
         }
     }
 
-    private void preencherMapaAleatorio() {
+    public void coletarRecursos() {
+        TipoTerreno tipoTerreno = mapa.obterTipoTerreno(posicaoLinha, posicaoColuna);
+
+        switch (tipoTerreno) {
+            case FLORESTA:
+                coletarRecurso(TipoRecurso.MATERIAL);
+                break;
+            case SAVANA:
+                coletarRecurso(TipoRecurso.AGUA);
+                break;
+            case PANTANO:
+                coletarRecurso(TipoRecurso.COMIDA);
+                break;
+            case DESERTO:
+                coletarRecurso(TipoRecurso.MATERIAL);
+                break;
+        }
+    }
+
+    private void coletarRecurso(TipoRecurso tipoRecurso) {
+        recursosColetados++;
+        System.out.println("Recurso coletado: " + tipoRecurso);
+        mostrarStatus();
+    }
+
+    public void lidarComEventos() {
         Random random = new Random();
+        int chanceEvento = random.nextInt(100);
 
-        for (int i = 1; i < linhas - 1; i++) {
-            for (int j = 1; j < colunas - 1; j++) {
-                matriz[i][j] = TipoTerreno.values()[random.nextInt(TipoTerreno.values().length - 3)];
+        if (chanceEvento < 20) {
+            System.out.println("Evento Aleatório: Uma tempestade se aproxima. Você perde alguns recursos!");
+            recursosColetados = Math.max(0, recursosColetados - 2);
+            mostrarStatus();
+        }
+    }
+
+    public void interagirComHabitanteLocal() {
+        Random random = new Random();
+        int chanceInteracao = random.nextInt(100);
+
+        if (chanceInteracao < 10) {
+            HabitanteLocal habitanteLocal = new HabitanteLocal();
+            habitanteLocal.interagir();
+        }
+    }
+
+    public void mostrarStatus() {
+        System.out.println("Posição do explorador: (" + posicaoLinha + ", " + posicaoColuna + ")");
+        System.out.println("Recursos coletados: " + recursosColetados);
+    }
+
+    public boolean verificarObjetivo() {
+        return recursosColetados == 15;
+    }
+}
+
+public class JogoExpedicao {
+    private Mapa mapa;
+    private Explorador explorador;
+    private int rodadas;
+    private boolean jogoEncerrado;
+
+    public JogoExpedicao(int linhas, int colunas) {
+        this.mapa = new Mapa(linhas, colunas);
+        this.explorador = new Explorador(mapa);
+        this.rodadas = 0;
+        this.jogoEncerrado = false;
+    }
+
+    public void inicializar() {
+        mapa.inicializarMapa();
+        explorador.inicializarPosicao();
+    }
+
+    public void iniciarJogo(Scanner scanner) {
+        while (!jogoEncerrado) {
+            System.out.println("\n----- Rodada " + rodadas + " -----");
+            explorador.mostrarStatus();
+            realizarRodada(scanner);
+            rodadas++;
+
+            if (explorador.verificarObjetivo()) {
+                System.out.println("\nParabéns! Você coletou todos os recursos. Você venceu!");
+                break;
+            }
+
+            if (rodadas > 30) {
+                System.out.println("\nInfelizmente, você ultrapassou 30 rodadas. Você perdeu!");
+                break;
             }
         }
     }
 
-    private void inicializarPosicaoJogador() {
-        posXJogador = linhas / 2;
-        posYJogador = colunas / 2;
-        matriz[posXJogador][posYJogador] = TipoTerreno.JOGADOR;
-    }
-
-    public void imprimirMapa() {
-        System.out.println("\nMapa:");
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                System.out.print(matriz[i][j].toString().charAt(0) + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    public void moverJogador() {
-        System.out.println("Mova o jogador: W A S D");
-        String movimento = scanner.nextLine();
-
-        int novaPosXJogador = posXJogador;
-        int novaPosYJogador = posYJogador;
-
-        switch (movimento.toLowerCase()) {
-            case "a":
-                novaPosYJogador = Math.max(posYJogador - 1, 1); // Evitar borda
-                break;
-            case "d":
-                novaPosYJogador = Math.min(posYJogador + 1, colunas - 2); // Evitar borda
-                break;
-            case "w":
-                novaPosXJogador = Math.max(posXJogador - 1, 1); // Evitar borda
-                break;
-            case "s":
-                novaPosXJogador = Math.min(posXJogador + 1, linhas - 2); // Evitar borda
-                break;
-        }
-
-        if (matriz[novaPosXJogador][novaPosYJogador] == TipoTerreno.FLORESTA) {
-            recursosColetados++;
-            System.out.println("Recurso coletado! Total de recursos: " + recursosColetados);
-        }
-
-        matriz[posXJogador][posYJogador] = TipoTerreno.VAZIO;
-        posXJogador = novaPosXJogador;
-        posYJogador = novaPosYJogador;
-        matriz[posXJogador][posYJogador] = TipoTerreno.JOGADOR;
-
-        imprimirMapa();
+    private void realizarRodada(Scanner scanner) {
+        explorador.mover(scanner);
+        explorador.coletarRecursos();
+        explorador.lidarComEventos();
+        explorador.interagirComHabitanteLocal();
+        mapa.mostrarMapa();
     }
 }

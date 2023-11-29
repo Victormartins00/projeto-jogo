@@ -1,29 +1,65 @@
-public class MatrizBordas {
-    public static void main(String[] args) {
-        int linhas = 10;
-        int colunas = 10;
+class Mapa {
+    private TipoTerreno[][] matriz;
+    private int linhas;
+    private int colunas;
 
-        String[][] matriz = new String[linhas][colunas];
+    public Mapa(int linhas, int colunas) {
+        this.linhas = linhas;
+        this.colunas = colunas;
+        this.matriz = new TipoTerreno[linhas][colunas];
+    }
 
-        // Preencher as bordas da matriz com "*"
+    public void inicializarMapaPadrao() {
+        // Mapa fornecido pelo usuário
+        String mapaPadrao =
+                "**********\n" +
+                "*  DDDDD *\n" +
+                "*  DDDDD *\n" +
+                "*  FFFFF *\n" +
+                "*  FFFFF *\n" +
+                "*  SSSSS *\n" +
+                "*  SSSSS *\n" +
+                "*  WWWWW *\n" +
+                "*  WWWWW *\n" +
+                "**********";
+
+        // Converter o mapa de string para matriz de TipoTerreno
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
-                if (i == 0 || i == linhas - 1 || j == 0 || j == colunas - 1) {
-                    matriz[i][j] = "*";
-                } else {
-                    matriz[i][j] = " "; // Preencher o interior com espaços em branco
-                }
+                char terrenoChar = mapaPadrao.charAt(i * (colunas + 1) + j); // +1 para contar os caracteres de nova linha
+                matriz[i][j] = charParaTipoTerreno(terrenoChar);
             }
-        }
-
-        // Exibir a matriz
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                System.out.print(matriz[i][j] + " ");
-            }
-            System.out.println();
         }
     }
+
+    private TipoTerreno charParaTipoTerreno(char terrenoChar) {
+        switch (terrenoChar) {
+            case 'D':
+                return TipoTerreno.DESERTO;
+            case 'F':
+                return TipoTerreno.FLORESTA;
+            case 'S':
+                return TipoTerreno.SAVANA;
+            case 'W':
+                return TipoTerreno.PANTANO;
+            case '*':
+                return TipoTerreno.BORDA;
+            default:
+                return null; // Caracter inválido
+        }
+    }
+
+    // ... (restante do código)
 }
 
+class JogoExpedicao {
+    // ... (restante do código)
 
+    public static void main(String[] args) {
+        Mapa mapa = new Mapa(10, 10);
+        mapa.inicializarMapaPadrao();
+        mapa.mostrarMapa();
+
+        // Restante do código
+    }
+}

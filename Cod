@@ -1,6 +1,10 @@
 import java.util.Random;
 import java.util.Scanner;
 
+enum TipoTerreno {
+    FLORESTA, SAVANA, PANTANO, DESERTO, JOGADOR
+}
+
 class Mapa {
     private TipoTerreno[][] matriz;
     private int linhas;
@@ -8,12 +12,14 @@ class Mapa {
     private int posXJogador;
     private int posYJogador;
     private Scanner scanner;
+    private int recursosColetados;
 
     public Mapa(int linhas, int colunas) {
         this.linhas = linhas;
         this.colunas = colunas;
         this.matriz = new TipoTerreno[linhas][colunas];
         this.scanner = new Scanner(System.in);
+        this.recursosColetados = 0;
     }
 
     public void inicializarMapa() {
@@ -47,7 +53,7 @@ class Mapa {
                 coluna = random.nextInt(colunas - 2) + 1; // Evitar bordas
             } while (matriz[linha][coluna] != null); // Garantir que a posição esteja vazia
 
-            matriz[linha][coluna] = TipoRecurso.values()[random.nextInt(TipoRecurso.values().length)];
+            matriz[linha][coluna] = TipoTerreno.FLORESTA; // Alterado para FLORESTA (pode ajustar conforme necessário)
         }
     }
 
@@ -79,6 +85,11 @@ class Mapa {
                 break;
         }
 
+        if (matriz[posXJogador][posYJogador] == TipoTerreno.FLORESTA) {
+            recursosColetados++;
+            System.out.println("Recurso coletado! Total de recursos: " + recursosColetados);
+        }
+
         matriz[posXJogador][posYJogador] = TipoTerreno.JOGADOR;
     }
 
@@ -86,13 +97,58 @@ class Mapa {
         System.out.println("\nMapa:");
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
-                if (matriz[i][j] != null) {
+                if (matriz[i][j] != null && matriz[i][j] != TipoTerreno.JOGADOR) {
                     System.out.print(matriz[i][j].toString().charAt(0) + " ");
+                } else if (matriz[i][j] == TipoTerreno.JOGADOR) {
+                    System.out.print("& ");
                 } else {
                     System.out.print("* ");
                 }
             }
             System.out.println();
         }
+    }
+
+    public int getRecursosColetados() {
+        return recursosColetados;
+    }
+}
+
+class JogoExpedicao {
+    private Mapa mapa;
+    private boolean jogoEncerrado;
+
+    public JogoExpedicao(int linhas, int colunas) {
+        this.mapa = new Mapa(linhas, colunas);
+        this.jogoEncerrado = false;
+    }
+
+    public void inicializar() {
+        mapa.inicializarMapa();
+    }
+
+    public void iniciarJogo() {
+        Scanner scanner = new Scanner(System.in);
+
+        while (!jogoEncerrado) {
+            System.out.println("\n----- Nova Rodada -----");
+            mapa.moverJogador();
+            mapa.imprimirMapa();
+
+            if (mapa.getRecursosColetados() == 15) {
+                System.out.println("Parabéns! Você coletou todos os recursos. Você venceu!");
+                jogoEncerrado = true;
+            }
+        }
+
+        scanner.close();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        JogoExpedicao jogo = new JogoExpedicao(10, 10);
+        jogo.inicializar();
+        jogo.iniciarJogo();
     }
 }
